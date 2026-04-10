@@ -2,6 +2,7 @@ package org.example.java5nsd20303.controller;
 
 
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -10,6 +11,8 @@ import org.example.java5nsd20303.dto.BookResponse;
 import org.example.java5nsd20303.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +20,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/books")
+
+
 public class BookController {
     private final BookService bookService;
     @GetMapping
@@ -28,7 +33,12 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.findById(id));
     }
 
+    //
+
     @PostMapping
+    //cách 1
+  //  @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @RolesAllowed("ADMIN")
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequest bookRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.add(bookRequest));
     }

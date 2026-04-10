@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,16 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    //Quản lý lỗi
+    //Dùng bên postbook controller
+    @ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<CustomErrorDetails> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        CustomErrorDetails errorDetails =new CustomErrorDetails(LocalDateTime.now(),
+                "Access Denied: You do not have permision to access this resource ", request.getDescription(false));
 
+                return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+
+    }
 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
